@@ -39,10 +39,10 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-[#f3f5f2] text-brand-ink antialiased">
+<body class="flex min-h-screen flex-col bg-[#f3f5f2] text-brand-ink antialiased">
     @include('partials.header')
 
-    <main>
+    <main class="flex-1">
         @yield('content')
     </main>
 
