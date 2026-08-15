@@ -3,12 +3,13 @@
 
     <div class="search-overlay-panel" role="dialog" aria-modal="true" aria-label="Search">
         <div class="search-overlay-inner">
-            <form class="search-form" action="{{ url('/search') }}" method="get" role="search">
+            <form class="search-form" action="{{ route('search') }}" method="get" role="search">
                 <label class="sr-only" for="site-search-input">Search</label>
                 <input
                     id="site-search-input"
                     type="search"
                     name="q"
+                    value="{{ request('q') }}"
                     placeholder="Search"
                     autocomplete="off"
                     data-search-input
