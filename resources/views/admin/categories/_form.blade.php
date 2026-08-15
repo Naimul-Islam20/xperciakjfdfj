@@ -19,17 +19,19 @@
         ])
     </div>
     <div>
-        <label for="menu_column" class="mb-1 block text-sm font-medium">Menu Column</label>
+        <label for="menu_column" class="mb-1 block text-sm font-medium">Menu Column *</label>
         <input id="menu_column" name="menu_column" type="number" min="1" max="10"
-            value="{{ old('menu_column', $category->menu_column) }}"
+            value="{{ old('menu_column', $category->menu_column) }}" required
             class="w-full rounded-lg border border-brand-ink/15 px-3 py-2 text-sm">
+        <p class="mt-1 text-xs text-brand-ink/50">Header “Our Collection” column (1–10).</p>
         @error('menu_column')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
     <div>
-        <label for="menu_row" class="mb-1 block text-sm font-medium">Menu Row</label>
-        <input id="menu_row" name="menu_row" type="number" min="0"
-            value="{{ old('menu_row', $category->menu_row ?? 0) }}"
+        <label for="menu_row" class="mb-1 block text-sm font-medium">Menu Row *</label>
+        <input id="menu_row" name="menu_row" type="number" min="1" max="2"
+            value="{{ old('menu_row', $category->menu_row ?? 1) }}" required
             class="w-full rounded-lg border border-brand-ink/15 px-3 py-2 text-sm">
+        <p class="mt-1 text-xs text-brand-ink/50">1 = top row, 2 = bottom row. Required to show in header.</p>
         @error('menu_row')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
     <div>

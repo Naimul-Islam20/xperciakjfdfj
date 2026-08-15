@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-white text-brand-ink antialiased">
+<body class="min-h-screen bg-[#f3f5f2] text-brand-ink antialiased">
     @include('partials.header')
 
     <main>

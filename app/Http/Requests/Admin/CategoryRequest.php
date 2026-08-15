@@ -23,8 +23,8 @@ abstract class CategoryRequest extends FormRequest
                 Rule::unique('categories', 'slug')->ignore($categoryId),
             ],
             'image' => ['nullable', 'image', 'max:5120'],
-            'menu_column' => ['nullable', 'integer', 'min:1', 'max:10'],
-            'menu_row' => ['nullable', 'integer', 'min:0'],
+            'menu_column' => ['required', 'integer', 'min:1', 'max:10'],
+            'menu_row' => ['required', 'integer', 'min:1', 'max:2'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['required', 'boolean'],
         ];

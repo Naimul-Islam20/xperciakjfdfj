@@ -42,8 +42,14 @@ class CategoryController extends Controller
 
     public function create(): View
     {
+        $slot = $this->nextMenuSlot();
+
         return view('admin.categories.create', [
-            'category' => new Category(['is_active' => true]),
+            'category' => new Category([
+                'is_active' => true,
+                'menu_column' => $slot['menu_column'],
+                'menu_row' => $slot['menu_row'],
+            ]),
         ]);
     }
 
@@ -55,6 +61,12 @@ class CategoryController extends Controller
         $data['sort_order'] = $data['sort_order'] ?? 0;
         $data['home_sort_order'] = $data['home_sort_order'] ?? 0;
         $data['image'] = $this->imageService->replace(null, $request->file('image'), 'categories');
+
+        if (empty($data['menu_column']) || empty($data['menu_row'])) {
+            $slot = $this->nextMenuSlot();
+            $data['menu_column'] = $data['menu_column'] ?: $slot['menu_column'];
+            $data['menu_row'] = $data['menu_row'] ?: $slot['menu_row'];
+        }
 
         Category::create($data);
 
@@ -160,5 +172,34 @@ class CategoryController extends Controller
         return redirect()
             ->route('admin.categories.index')
             ->with('success', $message);
+    }
+
+    /**
+     * Next free header mega-menu slot (column 1–10, row 1 then 2).
+     *
+     * @return array{menu_column: int, menu_row: int}
+     */
+    private function nextMenuSlot(): array
+    {
+        $used = Category::query()
+            ->parents()
+            ->whereNotNull('menu_column')
+            ->whereIn('menu_row', [1, 2])
+            ->get(['menu_column', 'menu_row']);
+
+        for ($column = 1; $column <= 10; $column++) {
+            foreach ([1, 2] as $row) {
+                $taken = $used->contains(
+                    fn (Category $category): bool => (int) $category->menu_column === $column
+                        && (int) $category->menu_row === $row
+                );
+
+                if (! $taken) {
+                    return ['menu_column' => $column, 'menu_row' => $row];
+                }
+            }
+        }
+
+        return ['menu_column' => 1, 'menu_row' => 1];
     }
 }

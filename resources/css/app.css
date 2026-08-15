@@ -990,7 +990,7 @@ body.mobile-sidebar-open {
 
 .product-detail {
     padding: 2rem 0 2.5rem;
-    background: #fff;
+    background: #f3f5f2;
 }
 
 .product-detail-grid {
@@ -1409,7 +1409,7 @@ body.product-lightbox-open {
 
 .related-products-section {
     padding: 0.5rem 0 3.5rem;
-    background: #fff;
+    background: #f3f5f2;
 }
 
 .related-products-heading {
@@ -1466,7 +1466,7 @@ body.product-lightbox-open {
 
 .collection-page {
     padding: 2rem 0 4rem;
-    background: #fff;
+    background: #f3f5f2;
 }
 
 .collection-page-title {
@@ -2018,7 +2018,7 @@ body.collection-filter-drawer-open {
 /* About page */
 .about-page {
     padding: 2.75rem 0 5rem;
-    background: #fff;
+    background: #f3f5f2;
 }
 
 .about-content {
@@ -2063,6 +2063,7 @@ body.collection-filter-drawer-open {
 /* Contact page */
 .contact-page {
     padding: 2.75rem 0 4.5rem;
+    background: #f3f5f2;
 }
 
 .contact-page .container {

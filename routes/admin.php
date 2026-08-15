@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AboutPageController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -49,5 +50,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('site-info', [SiteInfoController::class, 'index'])->name('site-info.index');
         Route::put('site-info', [SiteInfoController::class, 'update'])->name('site-info.update');
+
+        Route::get('about', [AboutPageController::class, 'index'])->name('about.index');
+        Route::put('about', [AboutPageController::class, 'update'])->name('about.update');
     });
 });
