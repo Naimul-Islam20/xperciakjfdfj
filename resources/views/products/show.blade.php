@@ -52,15 +52,6 @@
                             </button>
                         @endforeach
                     </div>
-                @elseif (! count($gallery))
-                    <div class="product-thumbs" role="list">
-                        <button type="button" class="product-thumb is-active" aria-hidden="true">
-                            <div class="product-gallery-placeholder"></div>
-                        </button>
-                        <button type="button" class="product-thumb" aria-hidden="true">
-                            <div class="product-gallery-placeholder"></div>
-                        </button>
-                    </div>
                 @endif
             </div>
 
@@ -96,7 +87,7 @@
     <div class="container">
         <h2 class="related-products-heading">You may also like</h2>
 
-        <div class="best-sellers-grid best-sellers-grid--4">
+        <div class="related-products-grid">
             @forelse ($relatedProducts ?? [] as $related)
                 <a href="{{ route('products.show', $related->slug) }}" class="product-card">
                     <div class="product-card-media">

@@ -22,8 +22,7 @@
                 <ul class="footer-links">
                     <li><a href="#" data-search-open>Search</a></li>
                     <li><a href="{{ route('contact.show') }}">Contact Us</a></li>
-                    <li><a href="#">Privacy policy</a></li>
-                    <li><a href="#">About Us</a></li>
+                    <li><a href="{{ route('about.show') }}">About Us</a></li>
                 </ul>
             </div>
 

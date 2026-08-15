@@ -111,4 +111,54 @@ class CategoryController extends Controller
             ->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');
     }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('warning', 'No categories selected.');
+        }
+
+        $categories = Category::query()
+            ->whereNull('parent_id')
+            ->whereIn('id', $ids)
+            ->withCount(['products', 'children'])
+            ->get();
+
+        $deleted = 0;
+        $skipped = 0;
+
+        foreach ($categories as $category) {
+            if ($category->products_count > 0 || $category->children_count > 0) {
+                $skipped++;
+                continue;
+            }
+
+            $this->imageService->delete($category->image);
+            $category->delete();
+            $deleted++;
+        }
+
+        if ($deleted === 0 && $skipped > 0) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', 'Could not delete selected categories. Remove products/subcategories first.');
+        }
+
+        $message = $deleted.' categor'.($deleted === 1 ? 'y' : 'ies').' deleted successfully.';
+        if ($skipped > 0) {
+            $message .= ' '.$skipped.' skipped (has products or subcategories).';
+        }
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', $message);
+    }
 }

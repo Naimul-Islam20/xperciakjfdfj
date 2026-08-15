@@ -19,16 +19,16 @@ class ProductController extends Controller
             ->where('id', '!=', $product->id)
             ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
             ->orderBy('sort_order')
-            ->limit(4)
+            ->limit(5)
             ->get();
 
-        if ($relatedProducts->count() < 4) {
+        if ($relatedProducts->count() < 5) {
             $extra = Product::query()
                 ->active()
                 ->where('id', '!=', $product->id)
                 ->whereNotIn('id', $relatedProducts->pluck('id'))
                 ->orderBy('sort_order')
-                ->limit(4 - $relatedProducts->count())
+                ->limit(5 - $relatedProducts->count())
                 ->get();
 
             $relatedProducts = $relatedProducts->concat($extra);

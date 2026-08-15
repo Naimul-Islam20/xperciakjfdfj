@@ -118,6 +118,35 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.products.index')
+                ->with('warning', 'No products selected.');
+        }
+
+        $products = Product::query()->whereIn('id', $ids)->get();
+
+        foreach ($products as $product) {
+            $this->imageService->delete($product->image);
+            $this->imageService->deleteMany($product->gallery ?? []);
+            $product->delete();
+        }
+
+        $count = $products->count();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', $count.' product'.($count === 1 ? '' : 's').' deleted successfully.');
+    }
+
     /**
      * @param  array<int, string>  $previousPaths
      * @return array{0: ?string, 1: ?array<int, string>}

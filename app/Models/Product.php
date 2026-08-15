@@ -198,12 +198,7 @@ class Product extends Model
             }
         }
 
-        // Keep at least two thumbs on detail page when only one image exists.
-        if (count($urls) === 1) {
-            $urls[] = $urls[0];
-        }
-
-        return $urls;
+        return array_values(array_filter($urls));
     }
 
     public function galleryPathUrl(string $path): ?string

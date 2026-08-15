@@ -26,18 +26,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::resource('products', ProductController::class)->except(['show']);
+        Route::delete('products-bulk', [ProductController::class, 'bulkDestroy'])->name('products.bulk-destroy');
         Route::resource('categories', CategoryController::class)->except(['show']);
+        Route::delete('categories-bulk', [CategoryController::class, 'bulkDestroy'])->name('categories.bulk-destroy');
         Route::resource('subcategories', SubCategoryController::class)->except(['show']);
+        Route::delete('subcategories-bulk', [SubCategoryController::class, 'bulkDestroy'])->name('subcategories.bulk-destroy');
         Route::resource('admins', AdminUserController::class)->except(['show']);
+        Route::delete('admins-bulk', [AdminUserController::class, 'bulkDestroy'])->name('admins.bulk-destroy');
         Route::resource('contacts', ContactMessageController::class)->only(['index', 'show', 'destroy']);
+        Route::delete('contacts-bulk', [ContactMessageController::class, 'bulkDestroy'])->name('contacts.bulk-destroy');
 
         Route::get('home-page', [HomePageController::class, 'index'])->name('home-page.index');
         Route::put('home-page/settings', [HomePageController::class, 'updateSettings'])->name('home-page.settings.update');
         Route::get('home-page/collections-settings', [HomePageController::class, 'editCollectionsSettings'])->name('home-page.collections-settings.edit');
         Route::put('home-page/collections-settings', [HomePageController::class, 'updateCollectionsSettings'])->name('home-page.collections-settings.update');
         Route::resource('home-hero-slides', HomeHeroSlideController::class)->except(['show', 'index']);
+        Route::delete('home-hero-slides-bulk', [HomeHeroSlideController::class, 'bulkDestroy'])->name('home-hero-slides.bulk-destroy');
         Route::resource('home-sections', HomeSectionController::class)->except(['show', 'index']);
+        Route::delete('home-sections-bulk', [HomeSectionController::class, 'bulkDestroy'])->name('home-sections.bulk-destroy');
         Route::resource('home-collection-items', HomeCollectionItemController::class)->except(['show', 'index']);
+        Route::delete('home-collection-items-bulk', [HomeCollectionItemController::class, 'bulkDestroy'])->name('home-collection-items.bulk-destroy');
 
         Route::get('site-info', [SiteInfoController::class, 'index'])->name('site-info.index');
         Route::put('site-info', [SiteInfoController::class, 'update'])->name('site-info.update');

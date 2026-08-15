@@ -55,4 +55,25 @@ class ContactMessageController extends Controller
             ->route('admin.contacts.index')
             ->with('success', 'Contact message deleted.');
     }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.contacts.index')
+                ->with('warning', 'No messages selected.');
+        }
+
+        $count = ContactMessage::query()->whereIn('id', $ids)->delete();
+
+        return redirect()
+            ->route('admin.contacts.index')
+            ->with('success', $count.' message'.($count === 1 ? '' : 's').' deleted.');
+    }
 }

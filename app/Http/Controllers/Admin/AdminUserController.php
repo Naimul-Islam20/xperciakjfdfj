@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreAdminRequest;
 use App\Http\Requests\Admin\UpdateAdminRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AdminUserController extends Controller
@@ -98,5 +99,47 @@ class AdminUserController extends Controller
         return redirect()
             ->route('admin.admins.index')
             ->with('success', 'Admin user deleted successfully.');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->reject(fn ($id) => $id === (int) auth()->id())
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.admins.index')
+                ->with('warning', 'No admins selected.');
+        }
+
+        $admins = User::query()
+            ->where('is_admin', true)
+            ->whereIn('id', $ids)
+            ->get();
+
+        $deleted = 0;
+
+        foreach ($admins as $admin) {
+            if (! auth()->user()?->can('delete', $admin)) {
+                continue;
+            }
+
+            $admin->delete();
+            $deleted++;
+        }
+
+        if ($deleted === 0) {
+            return redirect()
+                ->route('admin.admins.index')
+                ->with('error', 'No selected admins could be deleted.');
+        }
+
+        return redirect()
+            ->route('admin.admins.index')
+            ->with('success', $deleted.' admin'.($deleted === 1 ? '' : 's').' deleted successfully.');
     }
 }

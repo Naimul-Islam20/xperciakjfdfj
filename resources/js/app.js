@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     initMobileSidebar();
     initAdminSidebar();
+    initAdminBulkSelect();
     initCollectionMega();
     initSearchOverlay();
     initHeroSlider();
@@ -127,6 +128,92 @@ function initAdminSidebar() {
         },
         { passive: true }
     );
+}
+
+function initAdminBulkSelect() {
+    document.querySelectorAll("[data-admin-bulk-wrap]").forEach((wrap) => {
+        const form = wrap.querySelector("[data-admin-bulk]");
+        if (!form) return;
+
+        const selectAll = form.querySelector("[data-admin-bulk-all]");
+        const items = Array.from(form.querySelectorAll("[data-admin-bulk-item]"));
+        const bar = form.querySelector("[data-admin-bulk-bar]");
+        const countEl = form.querySelector("[data-admin-bulk-count]");
+        const deleteBtn = form.querySelector(".admin-bulk-delete");
+        const toggleBtn = wrap.querySelector("[data-admin-select-toggle]");
+        const cancelBtn = wrap.querySelector("[data-admin-select-cancel]");
+
+        if (!items.length) return;
+
+        const setSelecting = (on) => {
+            wrap.classList.toggle("is-selecting", on);
+            form.classList.toggle("is-selecting", on);
+            if (toggleBtn) toggleBtn.hidden = on;
+            if (cancelBtn) cancelBtn.hidden = !on;
+
+            if (!on) {
+                items.forEach((item) => {
+                    item.checked = false;
+                });
+                if (selectAll) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                }
+            }
+
+            sync();
+        };
+
+        const sync = () => {
+            const selecting = wrap.classList.contains("is-selecting");
+            const selected = items.filter((item) => item.checked);
+            const count = selected.length;
+
+            if (selectAll) {
+                selectAll.checked = count > 0 && count === items.length;
+                selectAll.indeterminate = count > 0 && count < items.length;
+            }
+
+            if (bar) bar.hidden = !selecting || count === 0;
+            if (countEl) countEl.textContent = String(count);
+        };
+
+        toggleBtn?.addEventListener("click", () => setSelecting(true));
+        cancelBtn?.addEventListener("click", () => setSelecting(false));
+
+        selectAll?.addEventListener("change", () => {
+            items.forEach((item) => {
+                if (!item.disabled) item.checked = selectAll.checked;
+            });
+            sync();
+        });
+
+        items.forEach((item) => {
+            item.addEventListener("change", sync);
+        });
+
+        form.addEventListener("submit", (event) => {
+            if (!wrap.classList.contains("is-selecting")) {
+                event.preventDefault();
+                return;
+            }
+
+            const selected = items.filter((item) => item.checked);
+            if (!selected.length) {
+                event.preventDefault();
+                return;
+            }
+
+            const message =
+                deleteBtn?.getAttribute("data-admin-bulk-confirm") ||
+                "Delete selected items?";
+            if (!window.confirm(message)) {
+                event.preventDefault();
+            }
+        });
+
+        setSelecting(false);
+    });
 }
 
 function initSingleImageUploads() {

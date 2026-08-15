@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateHomeHeroSlideRequest;
 use App\Models\HomeHeroSlide;
 use App\Services\ProductImageService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HomeHeroSlideController extends Controller
@@ -71,5 +72,33 @@ class HomeHeroSlideController extends Controller
         return redirect()
             ->route('admin.home-page.index')
             ->with('success', 'Hero slide deleted successfully.');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.home-page.index')
+                ->with('warning', 'No slides selected.');
+        }
+
+        $slides = HomeHeroSlide::query()->whereIn('id', $ids)->get();
+
+        foreach ($slides as $slide) {
+            $this->imageService->delete($slide->image);
+            $slide->delete();
+        }
+
+        $count = $slides->count();
+
+        return redirect()
+            ->route('admin.home-page.index')
+            ->with('success', $count.' slide'.($count === 1 ? '' : 's').' deleted successfully.');
     }
 }

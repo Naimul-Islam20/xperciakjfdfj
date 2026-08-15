@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\HomeSection;
 use App\Services\SlugService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -69,6 +70,27 @@ class HomeSectionController extends Controller
         return redirect()
             ->route('admin.home-page.index')
             ->with('success', 'Home section deleted successfully.');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.home-page.index')
+                ->with('warning', 'No sections selected.');
+        }
+
+        $count = HomeSection::query()->whereIn('id', $ids)->delete();
+
+        return redirect()
+            ->route('admin.home-page.index')
+            ->with('success', $count.' section'.($count === 1 ? '' : 's').' deleted successfully.');
     }
 
     private function prepareSectionData(array $data, ?int $ignoreId = null): array

@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateHomeCollectionItemRequest;
 use App\Models\Category;
 use App\Models\HomeCollectionItem;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -67,6 +68,27 @@ class HomeCollectionItemController extends Controller
         return redirect()
             ->route('admin.home-page.index')
             ->with('success', 'Collection item removed successfully.');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $ids = collect($request->input('ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return redirect()
+                ->route('admin.home-page.index')
+                ->with('warning', 'No collection items selected.');
+        }
+
+        $count = HomeCollectionItem::query()->whereIn('id', $ids)->delete();
+
+        return redirect()
+            ->route('admin.home-page.index')
+            ->with('success', $count.' collection item'.($count === 1 ? '' : 's').' removed successfully.');
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
@@ -14,3 +15,4 @@ Route::get('/products/{slug}', [ProductController::class, 'show'])->name('produc
 Route::get('/collections/{slug}', [CategoryController::class, 'show'])->name('collections.show');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/about', [AboutController::class, 'show'])->name('about.show');
